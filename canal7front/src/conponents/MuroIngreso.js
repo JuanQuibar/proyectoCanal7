@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import logo from '../img/logo.svg';
 import api from '../config/api';
 import axios from 'axios';
+import Loading from './Pages/Loading';
 
 
 const schema = yup.object().shape({
@@ -18,68 +19,55 @@ const MuroIngreso = (props) => {
     
     const [values, handlerInput] = useCustomForm();
     const [result, setResult] = useState({});
-    const [error, setError] = useState(false);
     const [muro, setMuro] = useState(false);
     const [pope, setPope] = useState();
+    const [loading, setLoading] = useState(false)
     
-    const load =()=>{
-        let timerInterval
-        Swal.fire({
-        title: 'Cargando tus datos',
-        html: ' <b></b> ',
-        timer: 2000,
-        timerProgressBar: true,
-        didOpen: () => {
-            Swal.showLoading()
-            const b = Swal.getHtmlContainer().querySelector('b')
-            timerInterval = setInterval(() => {
-            b.textContent = Swal.getTimerLeft()
-            }, 100)
-        },
-        willClose: () => {
-            clearInterval(timerInterval)
-        }
-        }).then((result) => {
-        /* Read more about handling dismissals below */
-        if (result.dismiss === Swal.DismissReason.timer) {
-            console.log('I was closed by the timer')
-        }
-        })
-    };
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     });
     
     const url_back= process.env.REACT_APP_URL_BACKEND
+
     const login = async () => {
+        setLoading(true)
         
         try{
             setResult(await axios.post(`${url_back}/auth/login`, values));
             console.log(result);
-            /* window.localStorage.setItem("Habilitado", result.data.info.habilitado); */
             window.localStorage.setItem("token", result.data.jwt);
-            Swal.fire({
+
+            setTimeout(()=>{
+                setLoading(false);
+            },2000)
+
+            setTimeout(()=>{
+                Swal.fire({
                 title: '¡Biernvenido!',
                 icon: 'success',
                 confirmButtonText: 'Ok',
-                timer: 3000
-            });
+                timer: 2000
+                });
+            }, 2100)
+            
+
+
         } catch (err) {
-            setError(true);
             Swal.fire({
                 title: 'Ups!',
                 text: 'Por favor, indentá de nuevo',
                 icon: 'error',
                 confirmButtonText: 'Ok'
             });
+            console.log(err);
         }
-        console.log(error);
     };
 
     const searchMuro = async ()=>{
         try{
         const consulta =await api.get(`/perfil`);
+        console.log("get a perfil")
         if(consulta){setMuro(true)}
         }
         catch{setMuro(false)
@@ -96,8 +84,8 @@ const MuroIngreso = (props) => {
 
     const redirect=()=>{
          window.location.href='/registro';  
-    }
-        
+    } 
+
     if(pope==="/registro" || pope==="/users/verify/:uuid"){
         return(
             null
@@ -121,7 +109,7 @@ const MuroIngreso = (props) => {
                                     {errors.pass ? <p className="text-danger">{errors.pass.message}</p> : null}
                                 </div>
                                 <div className="d-grid gap-2 mt-3">
-                                    <button type="submit" className="btn btn-primary" onClick={load}  >Ingresar</button>
+                                    <button type="submit" className="btn btn-primary" >Ingresar</button>
                                 </div>
                                 <div className="login_registro">
                                 <div className="d-grid gap-2 mt-3">
@@ -135,13 +123,17 @@ const MuroIngreso = (props) => {
             </div>
         )
 
+    } else if (loading){
+        return( 
+            <Loading /> 
+       )     
     } else{
         return (
                 null
         )
-    }       
+    }
+    
 };
+
      
 export default MuroIngreso;
-
-/* <Link to="/registro" className= " login_registro_text"></Link> */

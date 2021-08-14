@@ -11,10 +11,7 @@ import Footer from "./conponents/Footer";
 import Registro from "./conponents/Pages/Registro";
 import Loading from "./conponents/Pages/Loading";
 import ConfirmarCorreo from "./conponents/Pages/ConfirmarCorreo";
-// import Login from "./conponents/Pages/Login";
 import MuroIngreso from "./conponents/MuroIngreso";
-
-
 
 
 function App() {
@@ -37,7 +34,6 @@ function App() {
           <Route exact path="/septimo_dia" component={SD_Index} />
           <Route exact path="/para_todo" component={PT_Index} />
           <Route exact path="/play_video" component={Video} />
-          {/* <Route exact path="/login" component={Login}  /> */}
           <Route exact path="/loading" component={Loading}  />
           <Route exact path="/registro" component={Registro}  />
           <Route exact path="/users/verify/:uuid" component={ConfirmarCorreo} />

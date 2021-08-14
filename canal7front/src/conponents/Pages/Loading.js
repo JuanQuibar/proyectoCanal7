@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Loading = (props) => {
-    // window.localStorage.setItem("pathname", props.location.pathname);
+    
     return (
         <>
         
